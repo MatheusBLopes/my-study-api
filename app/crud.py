@@ -1,9 +1,10 @@
-from app.api.deps import (
-    SessionDep,
-)
-from . import models, schemas
-from sqlalchemy.future import select
 from datetime import datetime
+
+from sqlalchemy.future import select
+
+from app.api.deps import SessionDep
+
+from . import models, schemas
 
 
 def get_card(db: SessionDep, card_id: int):
@@ -13,26 +14,41 @@ def get_card(db: SessionDep, card_id: int):
     if result is None:
         return None
 
-    sorted_reviews = sorted(result.reviews, key=lambda review: review.created_at, reverse=True)
+    sorted_reviews = sorted(
+        result.reviews, key=lambda review: review.created_at, reverse=True
+    )
 
     result.reviews = sorted_reviews
 
     return result
 
-def get_cards(db: SessionDep, date: datetime = None, skip: int = 0, limit: int = 10, ):
 
+def get_cards(
+    db: SessionDep,
+    date: datetime = None,
+    skip: int = 0,
+    limit: int = 10,
+):
     if date:
-        stmt = select(models.Card).offset(skip).limit(limit).where(models.Card.next_review_date == date)
+        stmt = (
+            select(models.Card)
+            .offset(skip)
+            .limit(limit)
+            .where(models.Card.next_review_date == date)
+        )
     else:
         stmt = select(models.Card).offset(skip).limit(limit)
 
     cards = db.exec(stmt).scalars().all()
 
     for card in cards:
-        sorted_reviews = sorted(card.reviews, key=lambda review: review.created_at, reverse=True)
+        sorted_reviews = sorted(
+            card.reviews, key=lambda review: review.created_at, reverse=True
+        )
         card.reviews = sorted_reviews
 
     return cards
+
 
 def create_card(db: SessionDep, card: schemas.CardCreate, deck: schemas.DeckResponse):
     db_card = models.Card(side_a=card.side_a, side_b=card.side_b, deck=deck)
@@ -41,8 +57,11 @@ def create_card(db: SessionDep, card: schemas.CardCreate, deck: schemas.DeckResp
     db.refresh(db_card)
     return db_card
 
+
 # Function to update a card
-def update_card(db: SessionDep, db_card: schemas.CardResponse, card_update: schemas.UpdateCard):
+def update_card(
+    db: SessionDep, db_card: schemas.CardResponse, card_update: schemas.UpdateCard
+):
     # Convert card_update to a dictionary and filter out None values
     update_data = card_update.model_dump(exclude_unset=True)
 
@@ -56,14 +75,17 @@ def update_card(db: SessionDep, db_card: schemas.CardResponse, card_update: sche
 
     return db_card
 
-def create_review(db: SessionDep, review: schemas.CardReviewResponse, quality: int, card: schemas.Card):
+
+def create_review(
+    db: SessionDep, review: schemas.CardReviewResponse, quality: int, card: schemas.Card
+):
     db_card_review = models.Review(
         quality=quality,
         easiness=review.easiness,
         interval=review.interval,
         repetitions=review.repetitions,
         review_date=review.review_date,
-        card=card
+        card=card,
     )
     db.add(db_card_review)
     db.commit()
@@ -81,11 +103,17 @@ def get_deck(db: SessionDep, deck_id: int):
 
     return result
 
-def get_decks(db: SessionDep, skip: int = 0, limit: int = 10, ):
+
+def get_decks(
+    db: SessionDep,
+    skip: int = 0,
+    limit: int = 10,
+):
     stmt = select(models.Deck).offset(skip).limit(limit)
     decks = db.exec(stmt).scalars().all()
 
     return decks
+
 
 def create_deck(db: SessionDep, deck: schemas.DeckCreate):
     db_deck = models.Deck(name=deck.name, description=deck.description)

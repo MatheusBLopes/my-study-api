@@ -1,6 +1,8 @@
-from pydantic import BaseModel
-from typing import Optional, List
 from datetime import datetime
+from typing import List, Optional
+
+from pydantic import BaseModel
+
 
 class CardReviewCreate(BaseModel):
     quality: int
@@ -12,6 +14,7 @@ class CardReviewCreate(BaseModel):
     class Config:
         from_attributes = True
 
+
 class CardReviewResponse(BaseModel):
     quality: int
     easiness: Optional[float] = None
@@ -22,6 +25,7 @@ class CardReviewResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
 
 class CardBase(BaseModel):
     side_a: str
@@ -38,6 +42,7 @@ class Card(CardBase):
     class Config:
         from_attributes = True
 
+
 class CardResponse(CardBase):
     id: int
     created_at: datetime
@@ -48,12 +53,11 @@ class CardResponse(CardBase):
     class Config:
         from_attributes = True
 
+
 class UpdateCard(BaseModel):
     side_a: Optional[str] = None
     side_b: Optional[str] = None
     next_review_date: Optional[datetime] = None
-
-
 
 
 class DeckBase(BaseModel):

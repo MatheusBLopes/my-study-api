@@ -16,6 +16,7 @@ uvicorn = "^0.29.0"
 alembic = "^1.13.1"
 fastapi-sqlalchemy = "^0.2.1"
 psycopg2-binary = "^2.9.9"
+pre-commit = "^3.7.1"
 
 
 [build-system]
