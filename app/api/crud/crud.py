@@ -3,8 +3,9 @@ from datetime import datetime
 from sqlalchemy.future import select
 
 from app.api.deps import SessionDep
+from app.api.models import models
 
-from . import models, schemas
+from ..schemas import schemas
 
 
 def get_card(db: SessionDep, card_id: int):

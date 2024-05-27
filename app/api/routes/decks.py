@@ -1,7 +1,8 @@
 from fastapi import APIRouter, HTTPException, Query
 
-from app import crud, schemas
+from app.api.crud import crud
 from app.api.deps import SessionDep
+from app.api.schemas import schemas
 
 router = APIRouter()
 

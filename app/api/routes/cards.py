@@ -3,8 +3,9 @@ from datetime import datetime
 from fastapi import APIRouter, HTTPException, Query
 from supermemo2 import SMTwo
 
-from app import crud, schemas
+from app.api.crud import crud
 from app.api.deps import SessionDep
+from app.api.schemas import schemas
 
 router = APIRouter()
 
