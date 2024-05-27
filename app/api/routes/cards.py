@@ -47,6 +47,12 @@ def update_card_schedule(
     if not db_card.reviews:
         review = SMTwo.first_review(card_review.quality)
     else:
+        if datetime.now().strftime("%Y-%m-%d") == db_card.reviews[
+            0
+        ].created_at.strftime("%Y-%m-%d"):
+            raise HTTPException(
+                status_code=400, detail="You cant perform a new review today"
+            )
         review = SMTwo(
             db_card.reviews[0].easiness,
             db_card.reviews[0].interval,
@@ -59,3 +65,13 @@ def update_card_schedule(
     )
 
     return db_card
+
+
+@router.delete("/{card_id}")
+def delete_card(card_id: int, db: SessionDep):
+    deb_card = crud.get_card(db, card_id=card_id)
+    if deb_card is None:
+        raise HTTPException(status_code=404, detail="Card not found")
+
+    crud.delete_card(db, deb_card)
+    return {"message": "Card deleted"}

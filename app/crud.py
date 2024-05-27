@@ -76,6 +76,11 @@ def update_card(
     return db_card
 
 
+def delete_card(db: SessionDep, card: models.Card):
+    db.delete(card)
+    db.commit()
+
+
 def create_review(
     db: SessionDep, review: schemas.CardReviewResponse, quality: int, card: schemas.Card
 ):
@@ -121,3 +126,15 @@ def create_deck(db: SessionDep, deck: schemas.DeckCreate):
     db.commit()
     db.refresh(db_deck)
     return db_deck
+
+
+def delete_deck(db: SessionDep, deck: models.Deck):
+    stmt = select(models.Card).where(models.Card.deck_id == deck.id)
+    cards = db.exec(stmt).scalars().all()
+
+    if cards:
+        for card in cards:
+            db.delete(card)
+
+    db.delete(deck)
+    db.commit()

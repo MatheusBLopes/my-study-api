@@ -12,7 +12,7 @@ def create_deck(deck: schemas.DeckCreate, db: SessionDep):
 
 
 @router.get("/{deck_id}", response_model=schemas.DeckResponse)
-def read_card(deck_id: int, db: SessionDep):
+def read_deck(deck_id: int, db: SessionDep):
     db_deck = crud.get_deck(db, deck_id=deck_id)
     if db_deck is None:
         raise HTTPException(status_code=404, detail="Deck not found")
@@ -27,3 +27,13 @@ def read_decks(
 ):
     decks = crud.get_decks(db, skip=skip, limit=limit)
     return decks
+
+
+@router.delete("/{deck_id}")
+def delete_deck(deck_id: int, db: SessionDep):
+    db_deck = crud.get_deck(db, deck_id=deck_id)
+    if db_deck is None:
+        raise HTTPException(status_code=404, detail="Deck not found")
+
+    crud.delete_deck(db, db_deck)
+    return {"message": "Deck deleted"}
