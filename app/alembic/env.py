@@ -2,9 +2,8 @@ import os
 from logging.config import fileConfig
 
 from alembic import context
-from sqlalchemy import engine_from_config, pool
-
-import app.api.models.models as models
+from api.models import models
+from sqlalchemy import engine_from_config, pool, text
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -59,6 +58,8 @@ def run_migrations_offline() -> None:
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
+        version_table_schema=target_metadata.schema,
+        include_schemas=True,
     )
 
     with context.begin_transaction():
@@ -79,9 +80,15 @@ def run_migrations_online() -> None:
     )
 
     with connectable.connect() as connection:
-        context.configure(connection=connection, target_metadata=target_metadata)
+        context.configure(
+            connection=connection,
+            target_metadata=target_metadata,
+            version_table_schema=target_metadata.schema,
+            include_schemas=True,
+        )
 
         with context.begin_transaction():
+            connection.execute(text("CREATE SCHEMA IF NOT EXISTS my_study_api"))
             context.run_migrations()
 
 

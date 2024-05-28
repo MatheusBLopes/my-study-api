@@ -1,12 +1,23 @@
-from sqlalchemy import Column, Date, DateTime, Float, ForeignKey, Integer, String, func
+from sqlalchemy import (
+    Column,
+    Date,
+    DateTime,
+    Float,
+    ForeignKey,
+    Integer,
+    MetaData,
+    String,
+    func,
+)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
-Base = declarative_base()
+Base = declarative_base(metadata=MetaData(schema="my_study_api"))
 
 
 class Deck(Base):
     __tablename__ = "decks"
+    __table_args__ = {"schema": "my_study_api"}
     id = Column(Integer, primary_key=True, index=True)
     name = Column(
         String,
@@ -21,6 +32,7 @@ class Deck(Base):
 
 class Card(Base):
     __tablename__ = "cards"
+    __table_args__ = {"schema": "my_study_api"}
     id = Column(Integer, primary_key=True, index=True)
     side_a = Column(
         String,
@@ -39,6 +51,7 @@ class Card(Base):
 
 class Review(Base):
     __tablename__ = "reviews"
+    __table_args__ = {"schema": "my_study_api"}
     id = Column(Integer, primary_key=True, index=True)
     easiness = Column(Float)
     interval = Column(Integer)

@@ -2,7 +2,7 @@ run:
 	fastapi dev ./app/main.py
 
 createmigration:
-	alembic revision -m "First migration"
+	alembic revision --autogenerate -m "First migration"
 
 runmigration:
 	alembic upgrade head
