@@ -23,6 +23,15 @@ services:
       - db
     volumes:
       - pgadmin_data:/var/lib/pgadmin
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: my-study-api-container
+    ports:
+      - "9000:9000"
+    depends_on:
+      - db
 
 volumes:
   my_pgdata:
